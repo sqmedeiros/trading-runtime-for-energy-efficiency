@@ -5,6 +5,7 @@ sudo apt-get install zip unzip
 sudo mkdir -p /opt/src
 sudo apt-get update
 sudo apt install cmake
+sudo apt install curl
 
 ## Compilers ##
    #C - v12.2.0 [NOTE: this will take about 3h to install]

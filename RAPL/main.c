@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define TEMPERATURETHRESHOLD 46.75
+#define TEMPERATURETHRESHOLD 51.75
 #define VARIANCE 10
 #define WHATTSCAP 25
 #define MAX_STRING_LENGTH 500
@@ -274,7 +274,7 @@ void perform_perf_measurement (struct MeasureArgs* args) {
     fprintf(args->fp, " %.2lf,", read_perf_measurement(fp));
     
     /* Time (ms): duration_time gives time in ns */
-    fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp) / 1000);
+    fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp) / 1000000);
     
     /* Temperate, Memory, Usage of perf: Not providing an actual value for Memory */
     fprintf(args->fp, " %.1f, , %d\n", getTemperature(), USE_PERF);
