@@ -70,4 +70,4 @@ cd RAPL/
 make clean
 cd ..
 
-#sudo reboot
+sudo reboot
