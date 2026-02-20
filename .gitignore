@@ -1,0 +1,13 @@
+*tmp
+.tmp*
+tmp.*
+.NETCore*
+*.class
+lshw
+sysinfo.*
+
+corefxlab/
+raplcap/
+powercap/
+Languages/C/k-nucleotide/klib/
+.vscode
