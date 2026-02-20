@@ -12,7 +12,8 @@ sudo apt install cmake
     sudo apt-get install libgmp-dev libmpfr-dev libmpc-dev 
     sudo apt-get install libapr1-dev
     sudo apt-get install libpcre2-dev
-    wget http://mirror.linux-ia64.org/gnu/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.gz 
+    #wget http://mirror.linux-ia64.org/gnu/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.gz
+    wget https://gcc.gnu.org/pub/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.gz
     tar -xvf gcc-12.2.0.tar.gz 
     cd gcc-12.2.0/ 
     ./configure --enable-shared --enable-linker-build-id --libexecdir=$HOME/gcc/usr/lib --without-included-gettext --enable-threads=posix --libdir=$HOME/gcc/usr/lib --enable-nls --disable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --enable-libphobos-checking=release --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --enable-cet --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --with-build-config=bootstrap-lto-lean --enable-link-serialization=2 --with-gmp --with-mpfr --with-mpc 
