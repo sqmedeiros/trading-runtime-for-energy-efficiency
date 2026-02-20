@@ -2,7 +2,7 @@
 NTIMES=2
 USE_PERF=1
 OUTPUT_FILE="measurements-perf.csv"
-MEASUREMENTS_FILE="measurements.csv"
+MEASUREMENTS_FILE="measurements123.csv"
 
 #This code was tested on Linux Ubuntu Server 22.04.3 LTS
 #Compile sensors wich will be used to calculate cool temperature
@@ -36,7 +36,7 @@ echo "Language,Program,PowerLimit,Package,Core,GPU,DRAM,Time(ms),Temperature,Mem
 for limit in -1 2 10 15 25
     do
     cd Utils/
-    python3 raplCapUpdate.py $limit $USE_PERF ../RAPL/main.c
+    python3 raplCapUpdate.py $limit $USE_PERF $MEASUREMENTS_FILE ../RAPL/main.c
     cd ..
     #Make RAPL lib
     cd RAPL/
