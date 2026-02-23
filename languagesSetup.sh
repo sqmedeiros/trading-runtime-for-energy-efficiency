@@ -5,7 +5,9 @@ sudo apt-get install zip unzip
 sudo mkdir -p /opt/src
 sudo apt-get update
 sudo apt install cmake
-sudo apt install curl
+sudo apt install curl #added
+sudo apt-get install libffi-dev #added (Python regeverse complement)
+
 
 ## Compilers ##
    #C - v12.2.0 [NOTE: this will take about 3h to install]
@@ -48,7 +50,7 @@ sudo apt install curl
     sudo make altinstall &&
     curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 &&
     pip3.11 install gmpy2)
-    
+
     
     #Java - v20.0.2
     wget https://download.oracle.com/java/20/archive/jdk-20.0.2_linux-x64_bin.deb
