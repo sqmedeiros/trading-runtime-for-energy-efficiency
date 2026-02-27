@@ -1,0 +1,46 @@
+processando measuremens-mult-iot1-perf-26-02-2026.csv
+Gordura (desvio do erro) da reta calculada:150.6282726485513
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4528937623961019, pvalue=1.9378386722371918e-10)
+		Não podemos afirmar que segue uma distribuição normal
+measuremens-mult-iot1-perf-26-02-2026.csv
+Coeficiente R2: 0.9534683104321537
+Coeficiente Spearman: 0.861557471379342
+	interesse medium:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+Gordura (desvio do erro) da reta calculada:1.2572498675299268
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4342089569917479, pvalue=1.232378119906588e-10)
+		Não podemos afirmar que segue uma distribuição normal
+measuremens-mult-iot1-perf-26-02-2026.csv
+Coeficiente R2: 0.9999981555987489
+Coeficiente Spearman: 0.861557471379342
+	interesse high:  n-body. Abaixo
+	interesse high:  binary-trees. Abaixo
+Gordura (desvio do erro) da reta calculada:121.02973165637937
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.49322384001852626, pvalue=5.342173179167593e-10)
+		Não podemos afirmar que segue uma distribuição normal
+measuremens-mult-iot1-perf-26-02-2026.csv
+Coeficiente R2: 0.9846427146609736
+Coeficiente Spearman: 0.861557471379342
+	interesse high:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+Gordura (desvio do erro) da reta calculada:424.8280717105172
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5087819984205211, pvalue=8.015601176187396e-10)
+		Não podemos afirmar que segue uma distribuição normal
+measuremens-mult-iot1-perf-26-02-2026.csv
+Coeficiente R2: 0.8842109625876392
+Coeficiente Spearman: 0.861557471379342
+	interesse high:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+Gordura (desvio do erro) da reta calculada:595.558829938161
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.516078774770451, pvalue=9.724649627191744e-10)
+		Não podemos afirmar que segue uma distribuição normal
+measuremens-mult-iot1-perf-26-02-2026.csv
+Coeficiente R2: 0.8189637065234122
+Coeficiente Spearman: 0.861557471379342
+	interesse high:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+
+slopes:
+3052.32296	9960.09918	13905.93456	19578.60799	22397.38614	
+linear coefficients:
+0.00000	0.00000	0.00000	0.00000	0.00000	
