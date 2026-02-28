@@ -1,46 +1,56 @@
 processando measuremens-mult-iot1-perf-26-02-2026.csv
-Gordura (desvio do erro) da reta calculada:150.6282726485513
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4528937623961019, pvalue=1.9378386722371918e-10)
+Gordura (desvio do erro) da reta calculada:150.62827264855136
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.45289376239610224, pvalue=1.9378386722372128e-10)
 		Não podemos afirmar que segue uma distribuição normal
 measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.9534683104321537
+Coeficiente R2: 0.9534683104321542
 Coeficiente Spearman: 0.861557471379342
 	interesse medium:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
-Gordura (desvio do erro) da reta calculada:1.2572498675299268
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4342089569917479, pvalue=1.232378119906588e-10)
+Gordura (desvio do erro) da reta calculada:1.2572498675299284
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.43420895699181883, pvalue=1.2323781199086812e-10)
 		Não podemos afirmar que segue uma distribuição normal
 measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.9999981555987489
+Coeficiente R2: 0.9999981555987492
 Coeficiente Spearman: 0.861557471379342
 	interesse high:  n-body. Abaixo
 	interesse high:  binary-trees. Abaixo
-Gordura (desvio do erro) da reta calculada:121.02973165637937
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.49322384001852626, pvalue=5.342173179167593e-10)
+Gordura (desvio do erro) da reta calculada:121.02973165637934
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.49322384001852715, pvalue=5.34217317916773e-10)
 		Não podemos afirmar que segue uma distribuição normal
 measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.9846427146609736
+Coeficiente R2: 0.9846427146609743
 Coeficiente Spearman: 0.861557471379342
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
 Gordura (desvio do erro) da reta calculada:424.8280717105172
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5087819984205211, pvalue=8.015601176187396e-10)
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5087819984205211, pvalue=8.015601176187455e-10)
 		Não podemos afirmar que segue uma distribuição normal
 measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.8842109625876392
+Coeficiente R2: 0.8842109625876394
 Coeficiente Spearman: 0.861557471379342
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
 Gordura (desvio do erro) da reta calculada:595.558829938161
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.516078774770451, pvalue=9.724649627191744e-10)
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5160787747704512, pvalue=9.724649627191744e-10)
 		Não podemos afirmar que segue uma distribuição normal
 measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.8189637065234122
+Coeficiente R2: 0.8189637065234119
 Coeficiente Spearman: 0.861557471379342
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
 
 slopes:
-3052.32296	9960.09918	13905.93456	19578.60799	22397.38614	
+0.00305	0.00996	0.01391	0.01958	0.02240	
 linear coefficients:
 0.00000	0.00000	0.00000	0.00000	0.00000	
+tempos medios das solucoes:
+88238.26736	34514.28646	27841.34896	24094.10069	22716.20486	
+consumo medio:
+263.43661	343.38653	384.90542	483.32356	533.47601	
+Coeficientes R2:
+Coeficientes Spearman:
+Gordura (desvio do erro) da reta calculada:
+0.95347	1.00000	0.98464	0.88421	0.81896	
+0.86156	0.86156	0.86156	0.86156	0.86156	
+150.62827	1.25725	121.02973	424.82807	595.55883	

@@ -267,7 +267,7 @@ def calculamedias(df, ncolunas, nlinhas, nexec, flags, file):
         
         pkg = pkg + ram
             
-        t = np.array(df.iloc[j:j+nexec,7]).astype(float)/10**6
+        t = np.array(df.iloc[j:j+nexec,7]).astype(float)
 
         power = np.array(df.iloc[j:j+nexec,2]).astype(float)
                                
@@ -680,8 +680,9 @@ def select_power(ds, e):
     vmconsumo = np.array(dsub.iloc[:,1])
     vdconsumo = np.array(dsub.iloc[:,2])
     vmtempo = np.array(dsub.iloc[:,3])
+    vdtempo = np.array(dsub.iloc[:,4])
     
-    return vmtempo, vmconsumo, vdconsumo
+    return vmtempo, vdtempo, vmconsumo, vdconsumo
 
 ########   main   ##################
 ########   main   ##################
@@ -731,9 +732,10 @@ outliers = crialistaoutliers()
 baselineslopeelite = 0.000470713037088506
 baselineslopethik = 0.004206933889974837
 
+arquivoscurtos_tudo = []
 
 for i in range(1,len(arquivos)):
-    nestilo = incrementaestilo(nestilo,i)
+    
     df, ncolunas, nlinhas, nexec = carregacsv(arquivos[i], flags, nexec)
     baselineslope = setbaselineslope(arquivos[i],flags)
     vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vpower = calculamedias(df, ncolunas, nlinhas, nexec, flags, file)
@@ -744,19 +746,27 @@ for i in range(1,len(arquivos)):
 
     conjunto_de_power = list(set(vpower))
     print(f'potencias achadas: {conjunto_de_power}')
+    arquivoscurtos_novo = []
+    arquivos_novo = []
+    cont=1
 
     for e in conjunto_de_power:
+        nestilo = incrementaestilo(nestilo,cont)
         print(f'Analisando potencia {e}')
 
-        vmtempo, vmconsumo, vdconsumo = select_power(ds, e)
+        arquivoscurtos_novo.append(arquivoscurtos[i-1] + '_' + str(e) + 'W')
+        arquivos_novo.append(str(e) + 'W-' + arquivos[i])
+        arquivonovo = str(e) + 'W-' + arquivos[i] 
+        
+        vmtempo, vdtempo, vmconsumo, vdconsumo = select_power(ds, e)
     
         a,b = calculaajuste(vmtempo, vmconsumo, vdconsumo, flags)
 
-        indest = (i-1)%7
-        # xr, yr = plotaretas(a,b,vmtempo,vdtempo,vmconsumo,vdconsumo,nsigma,estilos[indest],estilos2[indest],cores[indest],arquivos[i],h1)
+        indest = (cont-1)%7
+        xr, yr = plotaretas(a,b,vmtempo,vdtempo,vmconsumo,vdconsumo,nsigma,estilos[indest],estilos2[indest],cores[indest],arquivonovo,h1)
         verr, sse, desvioerro, gorduras = calculaerro(a,b,vmtempo, vmconsumo, gorduras, flags, file)
         sigout = 2 #nmero de desvios para um ponto ser considerado outlier
-        # plotarestasdesvio(xr,yr,sigout,desvioerro,cores[indest],h2)
+        plotarestasdesvio(xr,yr,sigout,desvioerro,cores[indest],h2)
 
         rshapwilk = shapiro(verr, file)
         coeffP, Vr2 = pearson(vmtempo,vmconsumo, sse, file, arquivos[i], Vr2)
@@ -777,12 +787,15 @@ for i in range(1,len(arquivos)):
         print('slope: ',a,' linear coeff: ', b)
         tempomedio.append(vmtempo.mean())
         consumomedio.append(vmconsumo.mean())
+        cont += 1
 
-imprimesalvainfo(slopes,lincoeff,tempomedio,consumomedio,arquivoscurtos,experimentname,Vr2,Vspearman,gorduras,file)
+    arquivoscurtos_tudo = np.append(arquivoscurtos_tudo,arquivoscurtos_novo)
+
+imprimesalvainfo(slopes,lincoeff,tempomedio,consumomedio,arquivoscurtos_tudo,experimentname,Vr2,Vspearman,gorduras,file)
 
 #matrizrelacaotempomedio(slopes,tempomedio,file)
-buscaoutliersmaquinasdiferentes(narq,outliers,arquivos,file)
+buscaoutliersmaquinasdiferentes(narq,outliers,arquivos_novo,file)
 
-mostraesalvagraficos(arquivoscurtos)
+mostraesalvagraficos(arquivoscurtos_tudo)
 
 file.close()

@@ -1,0 +1,55 @@
+processando measurements-mult-elite-perf-20-02-2026.csv
+Gordura (desvio do erro) da reta calculada:315.8147953953824
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5234110659553662, pvalue=1.183252163267078e-09)
+		Não podemos afirmar que segue uma distribuição normal
+measurements-mult-elite-perf-20-02-2026.csv
+Coeficiente R2: 0.8887669943621618
+Coeficiente Spearman: 0.8759076926242579
+	interesse high:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+Gordura (desvio do erro) da reta calculada:0.7647002130616689
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.3251286278103489, pvalue=1.0577697055994923e-11)
+		Não podemos afirmar que segue uma distribuição normal
+measurements-mult-elite-perf-20-02-2026.csv
+Coeficiente R2: 0.9999993897973101
+Coeficiente Spearman: 0.8759076926242579
+	interesse medium:  binary-trees. Abaixo
+Gordura (desvio do erro) da reta calculada:48.2154501529422
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5100396810573238, pvalue=8.285980530491204e-10)
+		Não podemos afirmar que segue uma distribuição normal
+measurements-mult-elite-perf-20-02-2026.csv
+Coeficiente R2: 0.9979742969612165
+Coeficiente Spearman: 0.8759076926242579
+	interesse medium:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+Gordura (desvio do erro) da reta calculada:363.19346056848
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4980241397637224, pvalue=6.049166266252459e-10)
+		Não podemos afirmar que segue uma distribuição normal
+measurements-mult-elite-perf-20-02-2026.csv
+Coeficiente R2: 0.9276187477397505
+Coeficiente Spearman: 0.8759076926242579
+	interesse high:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+Gordura (desvio do erro) da reta calculada:676.7670464475946
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5279421493720241, pvalue=1.3371124864534715e-09)
+		Não podemos afirmar que segue uma distribuição normal
+measurements-mult-elite-perf-20-02-2026.csv
+Coeficiente R2: 0.825667177536775
+Coeficiente Spearman: 0.8759076926242579
+	interesse high:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+
+slopes:
+0.00335	0.00996	0.01458	0.02064	0.02568	
+linear coefficients:
+0.00000	0.00000	0.00000	0.00000	0.00000	
+tempos medios das solucoes:
+103346.17535	37225.75347	28904.85417	24994.13368	22670.34896	
+consumo medio:
+362.94911	370.61500	418.85736	521.20149	617.85507	
+Coeficientes R2:
+Coeficientes Spearman:
+Gordura (desvio do erro) da reta calculada:
+0.88877	1.00000	0.99797	0.92762	0.82567	
+0.87591	0.87591	0.87591	0.87591	0.87591	
+315.81480	0.76470	48.21545	363.19346	676.76705	
