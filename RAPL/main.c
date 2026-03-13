@@ -16,14 +16,14 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define TEMPERATURETHRESHOLD 51.75
+#define TEMPERATURETHRESHOLD 56.5
 #define VARIANCE 10
-#define WHATTSCAP 25
+#define WHATTSCAP -1
 #define MAX_STRING_LENGTH 500
 #define MAX_COMMAND_LENGTH 500
-#define MEASUREMENTS_FILE "measurements.csv"
+#define MEASUREMENTS_FILE "measurements-rapl.csv"
 #define TIME_OUT_LIMIT 60*1500
-#define USE_PERF 1
+#define USE_PERF 0
 
 
 // Structure to hold function return value and timeout flag
@@ -301,7 +301,7 @@ void performMeasurements(const char *command, const char *language, const char *
     fprintf(fp, "Language, Program, PowerLimit, Package, Core(s), GPU, DRAM, Time (ms), Temperature, Memory, Perf\n");
 
     for (int i = 0; i < ntimes; i++) {
-        fprintf(fp, "%s, %s, %d,", language, program, WHATTSCAP);
+        fprintf(fp, "%s, %s, %d, ", language, program, WHATTSCAP);
         temperature = getTemperature();
 
         while (temperature > TEMPERATURETHRESHOLD + VARIANCE) {
