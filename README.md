@@ -60,10 +60,19 @@ Note: This setup was not fully tested and my require manual interaction (such as
 sudo sh gen-input.sh
 ```
 
-3. Execute the script to generate the CSV file (this script iterates all the Languages and all of the programs):
+3. Check the `sudo` timeout
+
+To execute `sudo` commands without retyping the password (the default timeout of `sudo` is 15 minutes), do the follow:
+  - `sudo visudo`
+  - Find a line line `Defaults    env_reset`
+  - Changet it to: `Defaults    env_reset,timestamp_timeout=-1`
+  - This way the timeout will never expire.
+
+
+4. Execute the script to generate the CSV file (this script iterates all the Languages and all of the programs):
 
 Edit ``measure.sh`` to use the *perf* tool or not. Set variable `USE_PERF` to zero in order to replicate the original work that does not use *perf*.
-
+  
 ```bash
 sh measure.sh
 ```
