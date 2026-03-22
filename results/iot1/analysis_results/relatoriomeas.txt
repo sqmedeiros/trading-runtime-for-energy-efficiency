@@ -1,56 +1,56 @@
-processando measuremens-mult-iot1-perf-26-02-2026.csv
-Gordura (desvio do erro) da reta calculada:150.62827264855136
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.45289376239610224, pvalue=1.9378386722372128e-10)
+processando measuremens-mult-iot1-rapl-16-03-2026 -sem_branco.csv
+Gordura (desvio do erro) da reta calculada:154.83574087807537
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4332554140680087, pvalue=1.2045697597263408e-10)
 		Não podemos afirmar que segue uma distribuição normal
-measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.9534683104321542
-Coeficiente Spearman: 0.861557471379342
-	interesse medium:  fannkuch-redux. Acima
+measuremens-mult-iot1-rapl-16-03-2026 -sem_branco.csv
+Coeficiente R2: 0.9525368497866831
+Coeficiente Spearman: 0.8616875323763872
+	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
-Gordura (desvio do erro) da reta calculada:1.2572498675299284
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.43420895699181883, pvalue=1.2323781199086812e-10)
+Gordura (desvio do erro) da reta calculada:1.2859950177906943
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4694007316395673, pvalue=2.9162245109141744e-10)
 		Não podemos afirmar que segue uma distribuição normal
-measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.9999981555987492
-Coeficiente Spearman: 0.861557471379342
-	interesse high:  n-body. Abaixo
+measuremens-mult-iot1-rapl-16-03-2026 -sem_branco.csv
+Coeficiente R2: 0.9999980146745444
+Coeficiente Spearman: 0.8616875323763872
+	interesse medium:  n-body. Abaixo
 	interesse high:  binary-trees. Abaixo
-Gordura (desvio do erro) da reta calculada:121.02973165637934
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.49322384001852715, pvalue=5.34217317916773e-10)
+Gordura (desvio do erro) da reta calculada:123.04259129315615
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4919852954027525, pvalue=5.174243974266078e-10)
 		Não podemos afirmar que segue uma distribuição normal
-measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.9846427146609743
-Coeficiente Spearman: 0.861557471379342
+measuremens-mult-iot1-rapl-16-03-2026 -sem_branco.csv
+Coeficiente R2: 0.9841066067107852
+Coeficiente Spearman: 0.8616875323763872
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
-Gordura (desvio do erro) da reta calculada:424.8280717105172
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5087819984205211, pvalue=8.015601176187455e-10)
+Gordura (desvio do erro) da reta calculada:426.2686611405565
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5095127954294923, pvalue=8.171560099609639e-10)
 		Não podemos afirmar que segue uma distribuição normal
-measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.8842109625876394
-Coeficiente Spearman: 0.861557471379342
+measuremens-mult-iot1-rapl-16-03-2026 -sem_branco.csv
+Coeficiente R2: 0.8834161138555048
+Coeficiente Spearman: 0.8616875323763872
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
-Gordura (desvio do erro) da reta calculada:595.558829938161
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5160787747704512, pvalue=9.724649627191744e-10)
+Gordura (desvio do erro) da reta calculada:594.9023621369095
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5155220871275448, pvalue=9.581652651795912e-10)
 		Não podemos afirmar que segue uma distribuição normal
-measuremens-mult-iot1-perf-26-02-2026.csv
-Coeficiente R2: 0.8189637065234119
-Coeficiente Spearman: 0.861557471379342
+measuremens-mult-iot1-rapl-16-03-2026 -sem_branco.csv
+Coeficiente R2: 0.8194602658476159
+Coeficiente Spearman: 0.8616875323763872
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
 
 slopes:
-0.00305	0.00996	0.01391	0.01958	0.02240	
+0.00311	0.00996	0.01389	0.01955	0.02237	
 linear coefficients:
 0.00000	0.00000	0.00000	0.00000	0.00000	
 tempos medios das solucoes:
-88238.26736	34514.28646	27841.34896	24094.10069	22716.20486	
+87707.42188	34163.97049	27873.81771	24112.93750	22745.93924	
 consumo medio:
-263.43661	343.38653	384.90542	483.32356	533.47601	
+263.95999	339.88374	384.88890	483.11766	532.93975	
 Coeficientes R2:
 Coeficientes Spearman:
 Gordura (desvio do erro) da reta calculada:
-0.95347	1.00000	0.98464	0.88421	0.81896	
-0.86156	0.86156	0.86156	0.86156	0.86156	
-150.62827	1.25725	121.02973	424.82807	595.55883	
+0.95254	1.00000	0.98411	0.88342	0.81946	
+0.86169	0.86169	0.86169	0.86169	0.86169	
+154.83574	1.28600	123.04259	426.26866	594.90236	

@@ -1,55 +1,55 @@
-processando measurements-mult-elite-perf-20-02-2026.csv
-Gordura (desvio do erro) da reta calculada:315.8147953953824
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5234110659553662, pvalue=1.183252163267078e-09)
+processando measurements-mult-elite-rapl-16-03-2026-sem_branco.csv
+Gordura (desvio do erro) da reta calculada:294.34440523315976
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5072045198324977, pvalue=7.689527889517419e-10)
 		Não podemos afirmar que segue uma distribuição normal
-measurements-mult-elite-perf-20-02-2026.csv
-Coeficiente R2: 0.8887669943621618
-Coeficiente Spearman: 0.8759076926242579
+measurements-mult-elite-rapl-16-03-2026-sem_branco.csv
+Coeficiente R2: 0.8854057255298183
+Coeficiente Spearman: 0.8665843595995761
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
-Gordura (desvio do erro) da reta calculada:0.7647002130616689
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.3251286278103489, pvalue=1.0577697055994923e-11)
+Gordura (desvio do erro) da reta calculada:0.7858928634458533
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.3266926616706549, pvalue=1.093454311493539e-11)
 		Não podemos afirmar que segue uma distribuição normal
-measurements-mult-elite-perf-20-02-2026.csv
-Coeficiente R2: 0.9999993897973101
-Coeficiente Spearman: 0.8759076926242579
+measurements-mult-elite-rapl-16-03-2026-sem_branco.csv
+Coeficiente R2: 0.9999993430077438
+Coeficiente Spearman: 0.8665843595995761
 	interesse medium:  binary-trees. Abaixo
-Gordura (desvio do erro) da reta calculada:48.2154501529422
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5100396810573238, pvalue=8.285980530491204e-10)
+Gordura (desvio do erro) da reta calculada:56.145080197420135
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5039529991750997, pvalue=7.060648076162986e-10)
 		Não podemos afirmar que segue uma distribuição normal
-measurements-mult-elite-perf-20-02-2026.csv
-Coeficiente R2: 0.9979742969612165
-Coeficiente Spearman: 0.8759076926242579
-	interesse medium:  fannkuch-redux. Acima
-	interesse high:  n-body. Abaixo
-Gordura (desvio do erro) da reta calculada:363.19346056848
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4980241397637224, pvalue=6.049166266252459e-10)
-		Não podemos afirmar que segue uma distribuição normal
-measurements-mult-elite-perf-20-02-2026.csv
-Coeficiente R2: 0.9276187477397505
-Coeficiente Spearman: 0.8759076926242579
+measurements-mult-elite-rapl-16-03-2026-sem_branco.csv
+Coeficiente R2: 0.9972147968789665
+Coeficiente Spearman: 0.8665843595995761
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
-Gordura (desvio do erro) da reta calculada:676.7670464475946
-Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5279421493720241, pvalue=1.3371124864534715e-09)
+Gordura (desvio do erro) da reta calculada:373.52990164001363
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.4966602629230019, pvalue=5.838805967986016e-10)
 		Não podemos afirmar que segue uma distribuição normal
-measurements-mult-elite-perf-20-02-2026.csv
-Coeficiente R2: 0.825667177536775
-Coeficiente Spearman: 0.8759076926242579
+measurements-mult-elite-rapl-16-03-2026-sem_branco.csv
+Coeficiente R2: 0.9227846880148924
+Coeficiente Spearman: 0.8665843595995761
+	interesse high:  fannkuch-redux. Acima
+	interesse high:  n-body. Abaixo
+Gordura (desvio do erro) da reta calculada:678.6722885846556
+Confiança de que o erro segue uma distribuição normal: ShapiroResult(statistic=0.5272488043261009, pvalue=1.312266631971862e-09)
+		Não podemos afirmar que segue uma distribuição normal
+measurements-mult-elite-rapl-16-03-2026-sem_branco.csv
+Coeficiente R2: 0.8221812894444064
+Coeficiente Spearman: 0.8665843595995761
 	interesse high:  fannkuch-redux. Acima
 	interesse high:  n-body. Abaixo
 
 slopes:
-0.00335	0.00996	0.01458	0.02064	0.02568	
+0.00318	0.00996	0.01451	0.02051	0.02539	
 linear coefficients:
 0.00000	0.00000	0.00000	0.00000	0.00000	
 tempos medios das solucoes:
-103346.17535	37225.75347	28904.85417	24994.13368	22670.34896	
+99786.09549	36788.50174	28866.58681	24981.58854	22729.35764	
 consumo medio:
-362.94911	370.61500	418.85736	521.20149	617.85507	
+330.19133	366.26189	416.30020	518.20669	612.34596	
 Coeficientes R2:
 Coeficientes Spearman:
 Gordura (desvio do erro) da reta calculada:
-0.88877	1.00000	0.99797	0.92762	0.82567	
-0.87591	0.87591	0.87591	0.87591	0.87591	
-315.81480	0.76470	48.21545	363.19346	676.76705	
+0.88541	1.00000	0.99721	0.92278	0.82218	
+0.86658	0.86658	0.86658	0.86658	0.86658	
+294.34441	0.78589	56.14508	373.52990	678.67229	

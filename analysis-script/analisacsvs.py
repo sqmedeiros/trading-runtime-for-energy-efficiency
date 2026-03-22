@@ -189,12 +189,12 @@ def carregacsv(arquivo, flags, nexec):
 
     return df, ncolunas, nlinhas, nexec
 
-def salvaresumo(arquivo,vnome, vmconsumo, vdconsumo, vmtempo,vdtempo,vpower):
+def salvaresumo(arquivo,vnome, vmconsumo, vdconsumo, vmtempo,vdtempo,vpower, vlang):
     
     print('salvando resumo de  ',arquivo)
     slopeindividual = vmconsumo/vmtempo
     
-    d = {'nome': vnome, 'consumo_medio': vmconsumo, 'desvio_consumo':vdconsumo, 'tempo_medio':vmtempo, 'desvio_tempo':vdtempo,  'slope_individual': slopeindividual, 'power': vpower}
+    d = {'nome': vnome, 'consumo_medio': vmconsumo, 'desvio_consumo':vdconsumo, 'tempo_medio':vmtempo, 'desvio_tempo':vdtempo,  'slope_individual': slopeindividual, 'power': vpower, 'lang':vlang}
     ds = pandas.DataFrame(data=d)
     #ds = ds.sort_values('nome')
     ds.to_csv('analysis_results/resumo' + arquivo)
@@ -240,6 +240,7 @@ def calculamedias(df, ncolunas, nlinhas, nexec, flags, file):
     j = 0
     cont = 0
     vnome = []
+    vlang = []
     vmconsumo = np.zeros(int(nlinhas/nexec))
     vdconsumo = np.zeros(int(nlinhas/nexec))
     vmtempo = np.zeros(int(nlinhas/nexec))
@@ -250,6 +251,7 @@ def calculamedias(df, ncolunas, nlinhas, nexec, flags, file):
     #Language,Program,PowerLimit,Package,Core,GPU,DRAM,Time(ms),Temperature,Memory,Perf
     
     while j < nlinhas:
+        vlang.append(df.iloc[j,0])
         vnome.append(df.iloc[j,1])
         vpower.append(int(df.iloc[j,2]))
         
@@ -289,7 +291,7 @@ def calculamedias(df, ncolunas, nlinhas, nexec, flags, file):
         
         j = j + nexec
         cont = cont + 1
-    return vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vpower
+    return vlang, vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vpower
 
 def carregaordenadonome(ds):
     #carrega novamente os valores nos vetores agora ordenado pelo nome caso os .csvs estejam em ordens diferentes (importante na analise dos ouliers)
@@ -738,8 +740,8 @@ for i in range(1,len(arquivos)):
     
     df, ncolunas, nlinhas, nexec = carregacsv(arquivos[i], flags, nexec)
     baselineslope = setbaselineslope(arquivos[i],flags)
-    vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vpower = calculamedias(df, ncolunas, nlinhas, nexec, flags, file)
-    ds, d = salvaresumo(arquivos[i],vnome, vmconsumo, vdconsumo, vmtempo,vdtempo, vpower)
+    vlang, vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vpower = calculamedias(df, ncolunas, nlinhas, nexec, flags, file)
+    ds, d = salvaresumo(arquivos[i],vnome, vmconsumo, vdconsumo, vmtempo,vdtempo, vpower, vlang)
     #vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vpower =  carregaordenadonome(ds)
     salvaresumoordenado(d,arquivos[i])
     #vmtempo, vdtempo = diferencatempos(ncolunas, vmtempo, vdtempo, vmtsoma, flags)
@@ -790,6 +792,9 @@ for i in range(1,len(arquivos)):
         cont += 1
 
     arquivoscurtos_tudo = np.append(arquivoscurtos_tudo,arquivoscurtos_novo)
+
+for item in set(vnome):
+    print(item)
 
 imprimesalvainfo(slopes,lincoeff,tempomedio,consumomedio,arquivoscurtos_tudo,experimentname,Vr2,Vspearman,gorduras,file)
 
