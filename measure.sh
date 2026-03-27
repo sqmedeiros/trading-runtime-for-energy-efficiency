@@ -1,8 +1,8 @@
 #!/bin/bash
-NTIMES=2
+NTIMES=20
 USE_PERF=1
-OUTPUT_FILE="measurements-perf.csv"
-MEASUREMENTS_FILE="measurements123.csv"
+OUTPUT_FILE="measurements-perf-27032026.csv"
+MEASUREMENTS_FILE="measurements-27032026.csv"
 
 #This code was tested on Linux Ubuntu Server 22.04.3 LTS
 #Compile sensors wich will be used to calculate cool temperature
@@ -33,7 +33,7 @@ cd ..
 echo "Language, Program, PowerLimit, PSys, Package, Core, GPU, DRAM, Time(ms), User Time, System Time, Temperature, Memory, Perf" > $OUTPUT_FILE
 
 # Loop over power limit values
-for limit in -1 2 10 15 25
+for limit in -1 1 2 4 8 10 15 25
     do
     cd Utils/
     python3 raplCapUpdate.py $limit $USE_PERF $MEASUREMENTS_FILE ../RAPL/main.c
