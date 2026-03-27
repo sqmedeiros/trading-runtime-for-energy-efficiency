@@ -16,12 +16,12 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define TEMPERATURETHRESHOLD 56.5
+#define TEMPERATURETHRESHOLD 45.75
 #define VARIANCE 10
 #define WHATTSCAP -1
 #define MAX_STRING_LENGTH 500
 #define MAX_COMMAND_LENGTH 500
-#define MEASUREMENTS_FILE "measurements-rapl.csv"
+#define MEASUREMENTS_FILE "measurements-perf123.csv"
 #define TIME_OUT_LIMIT 60*1500
 #define USE_PERF 0
 
@@ -162,7 +162,7 @@ void writeErrorMessage(const char *language, const char *program, const char *er
         exit(-1);
     }
 
-    fprintf(fp, "Language, Program, PowerLimit, Package, Core(s), GPU, DRAM, Time (ms), Temperature, Memory\n");
+    fprintf(fp, "Error Language, Program, PowerLimit, Package, Core(s), GPU, DRAM, Time (ms), Temperature, Memory\n");
     fprintf(fp, "%s, %s, %d, %s, %s, %s, %s, %s, %s, %s\n", language, program, WHATTSCAP,
                         errorMsg,errorMsg,errorMsg,errorMsg,errorMsg,errorMsg,errorMsg);
     fclose(fp);
@@ -225,7 +225,8 @@ void* measure(struct MeasureArgs* args){
         
     rapl_after(args->fp, args->core);
     sprintf(str_temp, "%.1f", getTemperature());
-    fprintf(args->fp, "%G, %s, %d, %d\n", time_spent, str_temp, mem, USE_PERF);
+    /* No value for user_time and system time */
+    fprintf(args->fp, "%G, , , %s, %d, %d\n", time_spent, str_temp, mem, USE_PERF);
     fflush(args->fp);
 }
 
@@ -239,14 +240,15 @@ double read_perf_measurement (FILE *fp) {
 
 void perform_perf_measurement (struct MeasureArgs* args) {
     const char *tmp_file = "measurements-perf-tmp.csv";
-    const char *energy_events = "power/energy-pkg/,power/energy-cores/,power/energy-ram/,power/energy-gpu/";
-    const char *time_event = "duration_time";
+    const char *energy_events = "power/energy-psys/,power/energy-pkg/,power/energy-cores/,power/energy-gpu/,power/energy-ram/";
+    const char *time_events = "duration_time,user_time,system_time";
+    const char *all_cpus = "--all-cpus"; /* this flag is necessary when getting energy and time metrics */
     char perf_cmd[MAX_STRING_LENGTH];
     /* to use '.' when printing floating values (we will read them back later) */
     const char* locale_cmd = "export LANG=en_US.UTF-8";  
     char full_cmd[MAX_STRING_LENGTH];
    
-    sprintf(perf_cmd, "perf stat -x ';' -e %s,%s %s > /dev/null 2> %s", energy_events, time_event, args->command, tmp_file);
+    sprintf(perf_cmd, "sudo perf stat -x ';' -e %s,%s %s %s > /dev/null 2> %s", energy_events, time_events, all_cpus, args->command, tmp_file);
     
     sprintf(full_cmd, "%s  &&  %s", locale_cmd, perf_cmd);
    
@@ -261,6 +263,9 @@ void perform_perf_measurement (struct MeasureArgs* args) {
         exit(-1);
     }
     
+    /* PSys */
+    fprintf(args->fp, " %.2lf,", read_perf_measurement(fp));
+
     /* Package */
     fprintf(args->fp, " %.2lf,", read_perf_measurement(fp));
     
@@ -276,6 +281,12 @@ void perform_perf_measurement (struct MeasureArgs* args) {
     /* Time (ms): duration_time gives time in ns */
     fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp) / 1000000);
     
+    /* User Time (ms): user_time_time gives time in ns */
+    fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp) / 1000000);
+
+    /* System Time (ms): system_time_time gives time in ns */
+    fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp) / 1000000);
+
     /* Temperate, Memory, Usage of perf: Not providing an actual value for Memory */
     fprintf(args->fp, " %.1f, , %d\n", getTemperature(), USE_PERF);
     
@@ -298,7 +309,7 @@ void performMeasurements(const char *command, const char *language, const char *
         exit(-1);
     }
 
-    fprintf(fp, "Language, Program, PowerLimit, Package, Core(s), GPU, DRAM, Time (ms), Temperature, Memory, Perf\n");
+    fprintf(fp, "Language, Program, PowerLimit, PSys, Package, Core(s), GPU, DRAM, Time (ms), User Time, Sys Time, Temperature, Memory, Perf\n");
 
     for (int i = 0; i < ntimes; i++) {
         fprintf(fp, "%s, %s, %d, ", language, program, WHATTSCAP);
@@ -325,6 +336,7 @@ void performMeasurements(const char *command, const char *language, const char *
         if (USE_PERF) {
             perform_perf_measurement(myArgs);
         } else {
+            fprintf(fp, " ,"); /* No value for PSys */
             pthread_create(&thread, NULL, measure, (void *)myArgs);
             
             // Join the thread to ensure its completion and get the return value
