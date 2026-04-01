@@ -75,7 +75,7 @@ Usually all cores are enabled, so you probably will edit this file only to disab
 Run the script as it is to disable all cores but one.
 
 ```bash
-cores_on_off.sh
+sudo sh cores_on_off.sh
 ```
 
 
