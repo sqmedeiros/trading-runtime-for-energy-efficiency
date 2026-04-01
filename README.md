@@ -69,7 +69,17 @@ To execute `sudo` commands without retyping the password (the default timeout of
   - This way the timeout will never expire.
 
 
-4. Execute the script to generate the CSV file (this script iterates all the Languages and all of the programs):
+4. Edit script `cores_on_off.sh` to enable/disable cores
+
+Usually all cores are enabled, so you probably will edit this file only to disable some cores.
+Run the script as it is to disable all cores but one.
+
+```bash
+cores_on_off.sh
+```
+
+
+5. Execute the script to generate the CSV file (this script iterates all the Languages and all of the programs):
 
 Edit ``measure.sh`` to use the *perf* tool or not. Set variable `USE_PERF` to zero in order to replicate the original work that does not use *perf*.
   
@@ -86,12 +96,15 @@ Note: You might need to update some of the compilers path since we did not chang
 |    **Language**  | Programming language of the sorting algorithm                                                      |
 |    **Program**   | Name of the sorting algorithm                                                                      |
 |  **PowerLimit**  | Power cap of the cores (in Watts)                                                                  |
+|    **PSys**      | Energy consumption of the entire System On Chip                                                    |
 |    **Package**   | Energy consumption of the entire socket - all cores consumption, GPU, and external core components |
 |     **Core**     | Energy consumption by all cores and caches                                                         |
 |     **GPU**      | Energy consumption by the GPU                                                                      |
 |     **DRAM**     | Energy consumption by the RAM                                                                      |
-|     **Time**     | Algorithm's execution time (in ms)                                                                 |
+|     **Time(ms)** | Algorithm's execution wall clock time (in ms)                                                      |
+|    **User Time** | Algorithm's execution user time (in ms)                                                            |
+|  **System Time** | Algorithm's execution system time (in ms)                                                          |
 | **Temperature**  | Mean temperature in all cores (in Celsius degrees)                                                 |
 |    **Memory**    | Total physical memory assigned to the algorithm execution (in KBytes)                              |
-|     **Perf**     | Flag indicating if the perf tool was used to get energy measurements                                                      |
+|     **Perf**     | Flag indicating if the perf tool was used to get energy measurements                               |
 
