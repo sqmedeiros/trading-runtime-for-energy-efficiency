@@ -21,9 +21,9 @@
 #define WHATTSCAP -1
 #define MAX_STRING_LENGTH 500
 #define MAX_COMMAND_LENGTH 500
-#define MEASUREMENTS_FILE "measurements-perf123.csv"
+#define MEASUREMENTS_FILE "measurements-system-09-04-2026.csv"
 #define TIME_OUT_LIMIT 60*1500
-#define USE_PERF 0
+#define USE_PERF 1
 
 
 // Structure to hold function return value and timeout flag
@@ -233,7 +233,16 @@ void* measure(struct MeasureArgs* args){
 double read_perf_measurement (FILE *fp) {
   char line[MAX_STRING_LENGTH];
   double value;
-  fscanf(fp, "%s[^\n]", line);
+  int d;
+  d = fscanf(fp, "%s[^\n]", line);
+  /* Sometimes perf does not report a value for system_time */
+  /* In our setting, data about system_time should be at the last line of the file */
+  /* When there is no data, we provide zero as the default value */
+  if (d != EOF) {
+      sscanf(line, "%lf", &value);
+  } else {
+      value = 0;
+  }
   sscanf(line, "%lf", &value);
   return value;
 }
