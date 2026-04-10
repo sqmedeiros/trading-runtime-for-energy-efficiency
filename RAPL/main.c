@@ -243,7 +243,6 @@ double read_perf_measurement (FILE *fp) {
   } else {
       value = 0;
   }
-  sscanf(line, "%lf", &value);
   return value;
 }
 
