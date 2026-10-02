@@ -39,12 +39,18 @@ sudo apt-get install libffi-dev #added (Python regeverse complement)
     #C++ - v12.2.0
     sudo apt-get install libboost-all-dev
     sudo apt-get install libtbb-dev
-    
+
+    # Added https://devguide.python.org/getting-started/setup-building/#install-dependencies
+    sudo apt-get install build-essential gdb lcov pkg-config \
+      libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev \
+      libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev \
+      tk-dev uuid-dev zlib1g-dev libmpdec-dev libzstd-dev \
+      inetutils-inetd
 
     #Python - v3.11.1
     (cd /usr/src && 
     sudo wget https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tgz  &&
-    tar -xzf Python-3.11.1.tgz &&
+    sudo tar -xzf Python-3.11.1.tgz &&
     cd Python-3.11.1 &&
     sudo ./configure --enable-optimizations &&
     sudo make altinstall &&
