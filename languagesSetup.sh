@@ -15,13 +15,20 @@ sudo apt-get install libffi-dev #added (Python regeverse complement)
     sudo apt-get install libgmp-dev libmpfr-dev libmpc-dev 
     sudo apt-get install libapr1-dev
     sudo apt-get install libpcre2-dev
-    #wget http://mirror.linux-ia64.org/gnu/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.gz
+    # wget http://mirror.linux-ia64.org/gnu/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.gz
     wget https://gcc.gnu.org/pub/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.gz
     tar -xvf gcc-12.2.0.tar.gz 
     cd gcc-12.2.0/ 
-    ./configure --enable-shared --enable-linker-build-id --libexecdir=$HOME/gcc/usr/lib --without-included-gettext --enable-threads=posix --libdir=$HOME/gcc/usr/lib --enable-nls --disable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --enable-libphobos-checking=release --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --enable-cet --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --with-build-config=bootstrap-lto-lean --enable-link-serialization=2 --with-gmp --with-mpfr --with-mpc 
+    # Added: https://gcc.gnu.org/wiki/InstallingGCC
+    ./contrib/download_prerequisites
+    curr_dir=$(pwd)
+    mkdir -p $HOME/gcc-12
+    pushd $HOME/gcc-12
+    "$curr_dir"/configure --enable-shared --enable-linker-build-id --libexecdir=$HOME/gcc/usr/lib --without-included-gettext --enable-threads=posix --libdir=$HOME/gcc/usr/lib --enable-nls --disable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --enable-libphobos-checking=release --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --enable-cet --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --with-build-config=bootstrap-lto-lean --enable-link-serialization=2 --with-gmp --with-mpfr --with-mpc 
+    make -j4
     make install 
-    cd ../
+    popd # Back to $PROJ/gcc-12.2.0
+    cd .. # Back to project root
     rm -rf gcc-12.2.0 gcc-12.2.0.tar.gz
         # K-nucl
         cd ./Languages/C/k-nucleotide || { echo "Directory not found"; exit 1; }
@@ -47,7 +54,7 @@ sudo apt-get install libffi-dev #added (Python regeverse complement)
       tk-dev uuid-dev zlib1g-dev libmpdec-dev libzstd-dev \
       inetutils-inetd
 
-    #Python - v3.11.1
+    # Python - v3.11.1
     (cd /usr/src && 
     sudo wget https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tgz  &&
     sudo tar -xzf Python-3.11.1.tgz &&
@@ -58,7 +65,7 @@ sudo apt-get install libffi-dev #added (Python regeverse complement)
     pip3.11 install gmpy2)
 
     
-    #Java - v20.0.2
+    # Java - v20.0.2
     wget https://download.oracle.com/java/20/archive/jdk-20.0.2_linux-x64_bin.deb
     sudo dpkg -i jdk-20.0.2_linux-x64_bin.deb
     sudo apt-get install -f
