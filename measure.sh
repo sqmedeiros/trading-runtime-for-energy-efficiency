@@ -1,8 +1,8 @@
 #!/bin/bash
-NTIMES=${1:-20}
-USE_PERF=${2:-1}
-OUTPUT_FILE="measurements-perf-$(date +'%d-%m-%Y').csv"
-MEASUREMENTS_FILE="measurements-$(date +'%d-%m-%Y').csv"
+USE_PERF=${1:-1}
+NTIMES=${2:-20}
+OUTPUT_FILE="measurements-perf-$USE_PERF-$(date +'%d-%m-%Y-%H:%M:%S').csv"
+MEASUREMENTS_FILE="measurements-$(date +'%d-%m-%Y-%H:%M:%S').csv"
 
 #This code was tested on Linux Ubuntu Server 22.04.3 LTS
 #Compile sensors wich will be used to calculate cool temperature
@@ -31,7 +31,7 @@ cd ..
 
 
 
-echo "Language, Program, PowerLimit, PSys, Package, Core, GPU, DRAM, Time(ms), User Time, System Time, Temperature, Memory, Perf" > $OUTPUT_FILE
+echo "Language,Program,PowerLimit,PSys,Package,Core,GPU,DRAM,Time(ms),User Time,System Time,Temperature,Memory,Perf" > $OUTPUT_FILE
 
 # Loop over power limit values
 for limit in -1 2 5 10 15 25
@@ -71,5 +71,3 @@ done
 cd RAPL/
 make clean
 cd ..
-
-sudo reboot
