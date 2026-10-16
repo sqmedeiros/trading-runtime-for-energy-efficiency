@@ -18,14 +18,14 @@ sudo python3 temperatureUpdate.py
 cd ..
 
 
-echo "Language,Program,PowerLimit,PSys,Package,Core,GPU,DRAM,Time(ms),User Time,System Time,Cache References,Cache Misses,Temperature,Memory,Perf" > $OUTPUT_FILE
+echo "Language,Program,PowerLimit,PSys,Package,Core,GPU,DRAM,Time(ms),User Time,System Time,Cache References,Cache Misses,Temperature,Memory,Perf" > "./benchmarks/$OUTPUT_FILE"
 
 programs_dacapo=("avrora" "batik" "biojava" "cassandra" "eclipse" "fop" "graphchi" "h2" "h2o" "jme" "jython" "kafka" "luindex" "lusearch" "pmd" "spring" "sunflow" "tomcat" "tradebeans" "tradesoap" "xalan" "zxing")
 
 for limit in -1 2 5 10 15 25; do
     pwd
     cd Utils/
-    sudo python3 raplCapUpdate.py "$limit" $USE_PERF $MEASUMENTS_FILE ../RAPL/main.c
+    sudo python3 raplCapUpdate.py "$limit" $USE_PERF $MEASUREMENTS_FILE ../RAPL/main.c
     cd ..
 
     # Make RAPL lib
@@ -37,10 +37,8 @@ for limit in -1 2 5 10 15 25; do
     for program in "${programs_dacapo[@]}"; do
         cd dacapo || exit
         sudo ../../RAPL/main "sudo $JAVA_PATH/bin/java -jar dacapo-23.11-MR2-chopin.jar $program" dacapo "$program" "$NTIMES"        
-	if ! [ -e measurements.csv ] ; then 
-          touch measurements.csv
-	fi
-        sudo tail -n +2 measurements.csv >> ../measurements_benchmarks.csv
+	file=$MEASUREMENTS_FILE
+        sudo tail -n +2 $MEASUREMENTS_FILE >> ../"$OUTPUT_FILE"
         cd ..
     done
     cd ..
