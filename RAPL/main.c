@@ -4,6 +4,8 @@
  *  2016-2017
  */
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -15,16 +17,20 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/time.h>
 
-#define TEMPERATURETHRESHOLD 45.75
+#define TEMPERATURETHRESHOLD 45.25
 #define VARIANCE 10
 #define WHATTSCAP -1
 #define MAX_STRING_LENGTH 500
 #define MAX_COMMAND_LENGTH 500
-#define MEASUREMENTS_FILE "measurements-system-09-04-2026.csv"
+#define MEASUREMENTS_FILE "measurements-16-10-2026-13:05:02.csv"
 #define TIME_OUT_LIMIT 60*1500
 #define USE_PERF 1
 
+
+
+void performMeasurements(const char* command,const char* language,const char* program,int ntimes, int core);
 
 // Structure to hold function return value and timeout flag
 struct ThreadData {
@@ -126,7 +132,8 @@ int runCommand(const char *command) {
     return mem;
 }
 
-void* programWorks(const char *command){
+void* programWorks(void *c){
+    char* command = (char*) c;
     FILE *fp2 = popen(command, "r");
     if (fp2 == NULL) {
         fprintf(stderr, "Error running program verification\n");
@@ -162,9 +169,9 @@ void writeErrorMessage(const char *language, const char *program, const char *er
         exit(-1);
     }
 
-    fprintf(fp, "Error Language, Program, PowerLimit, Package, Core(s), GPU, DRAM, Time (ms), Temperature, Memory\n");
-    fprintf(fp, "%s, %s, %d, %s, %s, %s, %s, %s, %s, %s\n", language, program, WHATTSCAP,
-                        errorMsg,errorMsg,errorMsg,errorMsg,errorMsg,errorMsg,errorMsg);
+    fprintf(fp, "Error Language, Program, PowerLimit, Package, Core(s), GPU, DRAM, Time (ms), CacheReferences, CacheMisses, Temperature, Memory\n");
+    fprintf(fp, "%s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s\n", language, program, WHATTSCAP,
+                        errorMsg,errorMsg,errorMsg,errorMsg,errorMsg,errorMsg,errorMsg, errorMsg);
     fclose(fp);
 }
 
@@ -206,7 +213,8 @@ struct MeasureArgs {
     const char *command;
 };
 
-void* measure(struct MeasureArgs* args){
+void* measure(void* arguments){
+    struct MeasureArgs* args = (struct MeasureArgs*) arguments;
     clock_t begin, end;
     double time_spent;
     struct timeval tvb, tva;
@@ -225,8 +233,8 @@ void* measure(struct MeasureArgs* args){
         
     rapl_after(args->fp, args->core);
     sprintf(str_temp, "%.1f", getTemperature());
-    /* No value for user_time and system time */
-    fprintf(args->fp, "%G, , , %s, %d, %d\n", time_spent, str_temp, mem, USE_PERF);
+    /* No value for user_time, system time, cache_references and cache_misses*/
+    fprintf(args->fp, "%G, , , , %s, %d, %d\n", time_spent, str_temp, mem, USE_PERF);
     fflush(args->fp);
 }
 
@@ -250,13 +258,14 @@ void perform_perf_measurement (struct MeasureArgs* args) {
     const char *tmp_file = "measurements-perf-tmp.csv";
     const char *energy_events = "power/energy-psys/,power/energy-pkg/,power/energy-cores/,power/energy-gpu/,power/energy-ram/";
     const char *time_events = "duration_time,user_time,system_time";
+    const char *cache_event = "cache-references,cache-misses";
     const char *all_cpus = "--all-cpus"; /* this flag is necessary when getting energy and time metrics */
     char perf_cmd[MAX_STRING_LENGTH];
     /* to use '.' when printing floating values (we will read them back later) */
     const char* locale_cmd = "export LANG=en_US.UTF-8";  
     char full_cmd[MAX_STRING_LENGTH];
    
-    sprintf(perf_cmd, "sudo perf stat -x ';' -e %s,%s %s %s > /dev/null 2> %s", energy_events, time_events, all_cpus, args->command, tmp_file);
+    sprintf(perf_cmd, "sudo perf stat -x ';' -e %s,%s,%s %s %s > /dev/null 2> %s", energy_events, time_events, cache_event, all_cpus, args->command, tmp_file);
     
     sprintf(full_cmd, "%s  &&  %s", locale_cmd, perf_cmd);
    
@@ -295,6 +304,12 @@ void perform_perf_measurement (struct MeasureArgs* args) {
     /* System Time (ms): system_time_time gives time in ns */
     fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp) / 1000000);
 
+    /* Cache References */
+    fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp));
+
+    /* Cache Misses */
+    fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp));
+
     /* Temperate, Memory, Usage of perf: Not providing an actual value for Memory */
     fprintf(args->fp, " %.1f, , %d\n", getTemperature(), USE_PERF);
     
@@ -317,7 +332,7 @@ void performMeasurements(const char *command, const char *language, const char *
         exit(-1);
     }
 
-    fprintf(fp, "Language, Program, PowerLimit, PSys, Package, Core(s), GPU, DRAM, Time (ms), User Time, Sys Time, Temperature, Memory, Perf\n");
+    fprintf(fp, "Language, Program, PowerLimit, PSys, Package, Core(s), GPU, DRAM, Time (ms), User Time, Sys Time, Cache References, Cache Misses, Temperature, Memory, Perf\n");
 
     for (int i = 0; i < ntimes; i++) {
         fprintf(fp, "%s, %s, %d, ", language, program, WHATTSCAP);

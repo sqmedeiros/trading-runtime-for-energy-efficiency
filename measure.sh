@@ -30,8 +30,7 @@ done
 cd ..
 
 
-
-echo "Language,Program,PowerLimit,PSys,Package,Core,GPU,DRAM,Time(ms),User Time,System Time,Temperature,Memory,Perf" > $OUTPUT_FILE
+echo "Language,Program,PowerLimit,PSys,Package,Core,GPU,DRAM,Time(ms),User Time,System Time,Cache References,Cache Misses,Temperature,Memory,Perf" > $OUTPUT_FILE
 
 # Loop over power limit values
 for limit in -1 2 5 10 15 25
