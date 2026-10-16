@@ -6,7 +6,7 @@ stress-ng --cpu $(nproc) --cpu-load 80 --timeout 180s
 
 # Run 20 times without perf
 echo "Running measure.sh without perf"
-./measure 0 20
+./measure.sh 0 20
 
 sleep 30
 
@@ -14,6 +14,6 @@ sleep 30
 stress-ng --cpu $(nproc) --cpu-load 80 --timeout 180s
 # Run 20 times with perf
 echo "Running measure.sh without perf"
-./measure 1 20
+./measure.sh 1 20
 
 sudo reboot
