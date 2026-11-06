@@ -64,15 +64,15 @@ sudo apt-get install libffi-dev #added (Python regeverse complement)
     pip3.15 install gmpy2)
 
     
-    # Java - v25.0.4 (LTS)
-    wget https://download.oracle.com/java/25/archive/jdk-25.0.4_linux-x64_bin.deb
+    # Java - 21.0.12 
+    wget https://download.oracle.com/java/21/archive/jdk-21.0.12.1_linux-x64_bin.deb
 
-    sudo dpkg -i jdk-25.0.4_linux-x64_bin.deb
+    sudo dpkg -i jdk-21.0.4_linux-x64_bin.deb
     sudo apt-get install -f
-    sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-25/bin/java 1
-    sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk-25/bin/javac 1
-    sudo update-alternatives --install /usr/bin/jar jar /usr/lib/jvm/jdk-25/bin/jar 1
-    rm jdk-25.0.4_linux-x64_bin.deb
+    sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-21/bin/java 1
+    sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk-21/bin/javac 1
+    sudo update-alternatives --install /usr/bin/jar jar /usr/lib/jvm/jdk-21/bin/jar 1
+    rm jdk-21.0.4_linux-x64_bin.deb
     #-----------------Download .jar from https://jar-download.com/artifacts/it.unimi.dsi/fastutil/8.3.1/source-code
     cd Languages/Java
     unzip jar_files.zip
