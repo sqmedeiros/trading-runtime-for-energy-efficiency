@@ -2,6 +2,7 @@
 
 
 int cpu_model;
+int cpu_vendor;
 int core=0;
 
 double package_before,package_after;
@@ -79,7 +80,11 @@ int detect_cpu(void) {
 		if (!strncmp(result,"vendor_id",8)) {
 			sscanf(result,"%*s%*s%s",vendor);
 
-			if (strncmp(vendor,"GenuineIntel",12)) {
+			if (!strncmp(vendor,"GenuineIntel",12)) cpu_vendor=CPU_VENDOR_INTEL;
+			else if (!strncmp(vendor,"AuthenticAMD",12)) {
+				cpu_vendor=CPU_VENDOR_AMD;
+				return -1;
+			} else {
 				printf("%s not an Intel chip\n",vendor);
 				return -1;
 			}

@@ -49,6 +49,11 @@
 #define TIME_UNIT_OFFSET	0x10
 #define TIME_UNIT_MASK		0xF000
 
+/* Set by detect_cpu */
+#define CPU_VENDOR_INTEL	0
+#define CPU_VENDOR_AMD		1
+
+extern int cpu_vendor;
 
 
 

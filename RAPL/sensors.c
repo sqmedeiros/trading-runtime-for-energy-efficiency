@@ -3,8 +3,8 @@
 float getTemperature() {
     char command[100];
     char output[200];
-    float temperature, mean_temp = 0.0;
-    int count = 0;
+    float temperature, mean_temp = 0.0, tctl_temp = 0.0;
+    int count = 0, tctl_count = 0;
 
     // Run sensors command and capture output
     // Run sensors command and capture output
@@ -23,11 +23,18 @@ float getTemperature() {
             sscanf(output, "Core %*d: +%f°C", &temperature);
             mean_temp += temperature;
             count++;
+        } else if(!strncmp(output, "Tctl:", 5)) { // AMD has no per-core sensors
+            sscanf(output, "Tctl: %f", &temperature);
+            tctl_temp += temperature;
+            tctl_count++;
         }
     }
 
-    if (count > 0)
-        mean_temp /= count;
+    if (count > 0) {
+      mean_temp /= count;
+		} else if (tctl_count > 0) {
+      mean_temp = tctl_temp / tctl_count;
+    }
         
     fclose(temp_file);
     remove("temp.txt");
