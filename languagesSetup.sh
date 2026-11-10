@@ -30,16 +30,17 @@ sudo apt-get install libffi-dev #added (Python regeverse complement)
     # cd .. # Back to project root
     # rm -rf  gcc-16.2.0.tar.gz
     #     # K-nucl
-    #     cd ./Languages/C/k-nucleotide || { echo "Directory not found"; exit 1; }
-    #
-    #     # Clone the klib repository if not already cloned
-    #     if [ ! -d "klib" ]; then
-    #         git clone https://github.com/attractivechaos/klib.git
-    #         echo "klib repository cloned."
-    #     else
-    #         echo "klib repository already exists."
-    #     fi
-    #     cd ../../../ 
+    cd ./Languages/C/k-nucleotide || { echo "Directory not found"; exit 1; }
+    
+        # Clone the klib repository if not already cloned
+    if [ ! -d "klib" ]; then
+     git clone https://github.com/attractivechaos/klib.git
+     echo "klib repository cloned."
+    else
+      echo "klib repository already exists."
+    fi
+
+    cd ../../../ 
 
 
     #C++ - v16.2.0
