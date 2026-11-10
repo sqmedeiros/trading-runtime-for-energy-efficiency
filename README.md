@@ -10,7 +10,7 @@ We focus only on a few languages: C++, Python and Java.
 
 ### Requirements
 - Debian-based Linux distributions (needs to work with RAPLCap)
-- Intel processor
+- Intel or AMD processor
 - Non containerized environment
 
 ### Directory Structure
@@ -38,11 +38,13 @@ We focus only on a few languages: C++, Python and Java.
 2. lm-sensors
 3. Powercap
 4. Raplcap
+5. RyzenAdj
 
 These libraries can be installed with the following command:
 
 ```bash
-sudo sh raplLibrariesSetup.sh
+sudo sh raplLibrariesSetup.sh # for Intel CPUs
+sudo sh ryzenAdjSetup.sh # for AMD CPUs
 ```
 
 ### Setup
