@@ -26,25 +26,25 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 
-#define TEMPERATURETHRESHOLD 42.0
+#define TEMPERATURETHRESHOLD 55.0
 #define VARIANCE 10
-#define WHATTSCAP 5
+#define WHATTSCAP 2
 #define MAX_STRING_LENGTH 500
 #define MAX_COMMAND_LENGTH 500
-#define MEASUREMENTS_FILE "measurements-11-11-2026-11:44:54.csv"
+#define MEASUREMENTS_FILE "measurements-11-11-2026-12:52:37.csv"
 #define TIME_OUT_LIMIT 60*1500
 #define USE_PERF 1
 
 
-int event_exists(char* event_name){
+bool event_exists(char* event_name){
   char cmd[MAX_COMMAND_LENGTH];
   sprintf(cmd, "perf list --no-desc | grep %s", event_name);
   int out = system(cmd);
   if(WEXITSTATUS(out) != 0){
-    return -1;
+    return false;
   }
 
-  return 1;
+  return true;
 };
 
 struct event_candidates {
@@ -61,13 +61,12 @@ struct event_candidates {
    char out[MAX_COMMAND_LENGTH];
 
    struct event_candidates ec = {0};
-
-   if(event_exists("/power/energy-pkg")) ec.energy_pkg = true;
-   if(event_exists("/power/energy-cores")) ec.energy_cores = true;
-   if(event_exists("/power/energy-gpu")) ec.energy_gpu = true;
-   if(event_exists("/power/energy-ram")) ec.energy_ram = true;
-   if(event_exists("/power/energy-psys")) ec.energy_psys = true;
-   if(cpu_vendor==CPU_VENDOR_AMD && event_exists("/power_core/energy-core")) ec.amd_energy_core = true;
+   if(event_exists("power/energy-pkg")) ec.energy_pkg = true;
+   if(event_exists("power/energy-cores")) ec.energy_cores = true;
+   if(event_exists("power/energy-gpu")) ec.energy_gpu = true;
+   if(event_exists("power/energy-ram")) ec.energy_ram = true;
+   if(event_exists("power/energy-psys")) ec.energy_psys = true;
+   if(cpu_vendor==CPU_VENDOR_AMD && event_exists("power_core/energy-core")) ec.amd_energy_core = true;
 
    return ec;
 };
