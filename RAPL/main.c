@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdint.h>
+#include <stdbool.h>
 #ifdef USE_RYZENADJ
 #include <ryzenadj.h>
 #else
@@ -23,15 +24,53 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/time.h>
+#include <sys/wait.h>
 
-#define TEMPERATURETHRESHOLD 43.5
+#define TEMPERATURETHRESHOLD 42.0
 #define VARIANCE 10
-#define WHATTSCAP 5
+#define WHATTSCAP -1
 #define MAX_STRING_LENGTH 500
 #define MAX_COMMAND_LENGTH 500
-#define MEASUREMENTS_FILE "measurements-09-11-2026-13:20:01.csv"
+#define MEASUREMENTS_FILE "measurements-11-11-2026-11:59:29.csv"
 #define TIME_OUT_LIMIT 60*1500
 #define USE_PERF 1
+
+
+int event_exists(char* event_name){
+  char cmd[MAX_COMMAND_LENGTH];
+  sprintf(cmd, "perf list --no-desc | grep %s", event_name);
+  int out = system(cmd);
+  if(WEXITSTATUS(out) != 0){
+    return -1;
+  }
+
+  return 1;
+};
+
+struct event_candidates {
+  bool energy_pkg;
+  bool energy_cores;
+  bool energy_gpu;
+  bool energy_ram;
+  bool energy_psys;
+  bool amd_energy_core;
+};
+
+
+ struct event_candidates fetch_energy_events(){
+   char out[MAX_COMMAND_LENGTH];
+
+   struct event_candidates ec = {0};
+
+   if(event_exists("/power/energy-pkg")) ec.energy_pkg = true;
+   if(event_exists("/power/energy-cores")) ec.energy_cores = true;
+   if(event_exists("/power/energy-gpu")) ec.energy_gpu = true;
+   if(event_exists("/power/energy-ram")) ec.energy_ram = true;
+   if(event_exists("/power/energy-psys")) ec.energy_psys = true;
+   if(cpu_vendor==CPU_VENDOR_AMD && event_exists("/power_core/energy-core")) ec.amd_energy_core = true;
+
+   return ec;
+};
 
 
 
@@ -326,21 +365,42 @@ double read_perf_measurement (FILE *fp) {
   return value;
 }
 
+void cond_read_perf(FILE* fp, bool cond, FILE* from){
+  if(cond)
+    fprintf(fp, " %.2lf,", read_perf_measurement(from));
+  else
+    fprintf(fp, "0,");
+}
+
+void build_energy_cmd(char* perf_cmd, struct event_candidates ec){
+    if(ec.energy_psys) strcat(perf_cmd, "power/energy-psys/,");
+    if(ec.energy_pkg) strcat(perf_cmd, "power/energy-pkg/,");
+    if(ec.amd_energy_core) strcat(perf_cmd, "power_core/energy-core/,");
+    if(ec.energy_cores) strcat(perf_cmd, "power/energy-cores/,");
+    if(ec.energy_gpu) strcat(perf_cmd, "power/energy-gpu/,");
+    if(ec.energy_ram) strcat(perf_cmd, "power/energy-ram/,");
+}
+
 void perform_perf_measurement (struct MeasureArgs* args) {
     const char *tmp_file = "measurements-perf-tmp.csv";
+    struct event_candidates ec = fetch_energy_events();
+    char perf_cmd[MAX_STRING_LENGTH];
+    char energy_events[MAX_STRING_LENGTH];
+    energy_events[0] = '\0';
     /* AMD has no PSys, GPU or DRAM counters. core counter is in the "power_core" (requires Linux >= 6.13) */
-    const char *energy_events = cpu_vendor == CPU_VENDOR_AMD
+    /* const char *energy_events = cpu_vendor == CPU_VENDOR_AMD
         ? "power/energy-pkg/,power_core/energy-core/"
-        : "power/energy-psys/,power/energy-pkg/,power/energy-cores/,power/energy-gpu/,power/energy-ram/";
-    const char *time_events = "duration_time,user_time,system_time";
+        : "power/energy-psys/,power/energy-pkg/,power/energy-cores/,power/energy-gpu/,power/energy-ram/"; */
+
+    build_energy_cmd(energy_events, ec);
+    const char *time_events = "duration_time,user_time,system_time"; 
     const char *cache_event = "cache-references,cache-misses";
     const char *all_cpus = "--all-cpus"; /* this flag is necessary when getting energy and time metrics */
-    char perf_cmd[MAX_STRING_LENGTH];
     /* to use '.' when printing floating values (we will read them back later) */
     const char* locale_cmd = "export LANG=en_US.UTF-8";  
     char full_cmd[MAX_STRING_LENGTH];
 
-    sprintf(perf_cmd, "sudo perf stat -x ';' -e %s,%s,%s %s %s > /dev/null 2> %s", energy_events, time_events, cache_event, all_cpus, args->command, tmp_file);
+    sprintf(perf_cmd, "sudo perf stat -x ';' -e %s%s,%s %s %s > /dev/null 2> %s", energy_events, time_events, cache_event, all_cpus, args->command, tmp_file);
     
     sprintf(full_cmd, "%s  &&  %s", locale_cmd, perf_cmd);
    
@@ -348,32 +408,21 @@ void perform_perf_measurement (struct MeasureArgs* args) {
     printf("Going to execute 2: %s\n", full_cmd);
    
     system(full_cmd);
-   
     FILE *fp = fopen(tmp_file, "r");
     if (fp == NULL) {
         perror("Error opening temporary measurement file");
         exit(-1);
     }
-    
-    /* PSys */
-    if (cpu_vendor == CPU_VENDOR_AMD)
-        fprintf(args->fp, " ,");
+
+    cond_read_perf(args->fp, ec.energy_psys, fp);
+    cond_read_perf(args->fp, ec.energy_pkg, fp);
+    if(cpu_vendor == CPU_VENDOR_AMD)
+       cond_read_perf(args->fp, ec.amd_energy_core, fp);
     else
-        fprintf(args->fp, " %.2lf,", read_perf_measurement(fp));
+       cond_read_perf(args->fp, ec.energy_cores, fp);
+    cond_read_perf(args->fp, ec.energy_gpu, fp);
+    cond_read_perf(args->fp, ec.energy_ram, fp);
 
-    /* Package */
-    fprintf(args->fp, " %.2lf,", read_perf_measurement(fp));
-
-    /* Core */
-    fprintf(args->fp, " %.2lf,", read_perf_measurement(fp));
-
-    /* GPU and DRAM */
-    if (cpu_vendor == CPU_VENDOR_AMD)
-        fprintf(args->fp, " , ,");
-    else {
-        fprintf(args->fp, " %.2lf,", read_perf_measurement(fp));
-        fprintf(args->fp, " %.2lf,", read_perf_measurement(fp));
-    }
 
     /* Time (ms): duration_time gives time in ns */
     fprintf(args->fp, " %ld,", (long int)read_perf_measurement(fp) / 1000000);
