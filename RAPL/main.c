@@ -28,10 +28,10 @@
 
 #define TEMPERATURETHRESHOLD 42.0
 #define VARIANCE 10
-#define WHATTSCAP -1
+#define WHATTSCAP 5
 #define MAX_STRING_LENGTH 500
 #define MAX_COMMAND_LENGTH 500
-#define MEASUREMENTS_FILE "measurements-11-11-2026-11:59:29.csv"
+#define MEASUREMENTS_FILE "measurements-11-11-2026-11:44:54.csv"
 #define TIME_OUT_LIMIT 60*1500
 #define USE_PERF 1
 
