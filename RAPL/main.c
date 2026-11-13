@@ -159,6 +159,32 @@ void destroyRyzenadj(ryzen_access ry) {
     cleanup_ryzenadj(ry);
 }
 #else
+/* Limits found before capping (desktop: a single package with a single die) */
+static raplcap_limit orig_long, orig_short;
+static int orig_saved = 0, orig_enabled = -1;
+
+/* Like printLimits on AMD: read the limits back from the hardware */
+static void printRaplLimits(raplcap *rc, const char *when) {
+    raplcap_limit l, s;
+    if (raplcap_pd_get_limits(rc, 0, 0, RAPLCAP_ZONE_PACKAGE, &l, &s))
+        return;
+    printf("Limits %s: long %.1f W, short %.1f W (%s)\n", when, l.watts, s.watts,
+           raplcap_pd_is_zone_enabled(rc, 0, 0, RAPLCAP_ZONE_PACKAGE) == 1 ? "enabled" : "disabled");
+}
+
+void restoreRapl(raplcap *rc){
+    if (orig_saved)
+    {
+        orig_long.seconds = 0;
+        orig_short.seconds = 0;
+        if (raplcap_pd_set_limits(rc, 0, 0, RAPLCAP_ZONE_PACKAGE, &orig_long, &orig_short))
+            perror("raplcap_pd_set_limits (restore)");
+    }
+    if (orig_enabled >= 0 && raplcap_pd_set_zone_enabled(rc, 0, 0, RAPLCAP_ZONE_PACKAGE, orig_enabled))
+        perror("raplcap_pd_set_zone_enabled (restore)");
+    printRaplLimits(rc, "restored");
+}
+
 int initializeRapl(raplcap *rc){
     printf("Running with CAP\n");
     raplcap_limit rl_short, rl_long;
@@ -188,6 +214,21 @@ int initializeRapl(raplcap *rc){
         return -1;
     }
 
+    if (n != 1 || d != 1)
+    {
+        fprintf(stderr, "Only 1 package with 1 die is supported (found %u packages, %u dies)\n", n, d);
+        raplcap_destroy(rc);
+        return -1;
+    }
+
+    /* Save the original limits to put them back */
+    orig_enabled = raplcap_pd_is_zone_enabled(rc, 0, 0, RAPLCAP_ZONE_PACKAGE);
+    orig_saved = !raplcap_pd_get_limits(rc, 0, 0, RAPLCAP_ZONE_PACKAGE, &orig_long, &orig_short);
+    if (orig_saved)
+        printRaplLimits(rc, "before capping");
+    else
+        printf("Could not read the limits: they will not be restored at the end\n");
+
     // for each package die, set a power cap of same limit for both long and short
     // a time window of 0 leaves the time window unchanged
     rl_long.watts = WHATTSCAP;
@@ -202,6 +243,9 @@ int initializeRapl(raplcap *rc){
             if (raplcap_pd_set_limits(rc, q, j, RAPLCAP_ZONE_PACKAGE, &rl_long, &rl_short))
             {
                 perror("raplcap_pd_set_limits");
+                restoreRapl(rc);
+                raplcap_destroy(rc);
+                return -1;
             }
         }
     }
@@ -215,9 +259,18 @@ int initializeRapl(raplcap *rc){
             if (raplcap_pd_set_zone_enabled(rc, q, j, RAPLCAP_ZONE_PACKAGE, 1))
             {
                 perror("raplcap_pd_set_zone_enabled");
+                /* If the zone was already enabled the cap is in force anyway */
+                if (orig_enabled != 1)
+                {
+                    restoreRapl(rc);
+                    raplcap_destroy(rc);
+                    return -1;
+                }
             }
         }
     }
+
+    printRaplLimits(rc, "after capping");
     return 0;
 }
 #endif
@@ -549,16 +602,20 @@ int main(int argc, char **argv) {
             printf("ryzenadj only supports AMD CPUs: rebuild with `make -B CAP_BACKEND=raplcap`\n");
             exit(-1);
         }
-        if (initializeRyzenadj(&ry))
+        if (initializeRyzenadj(&ry)) {
+            writeErrorMessage(language, program, "CapError");
             return -1;
+        }
 #else
         /* raplcap fails on AMD */
         if (cpu_vendor == CPU_VENDOR_AMD) {
             printf("Power capping on AMD needs ryzenadj: rebuild with `make -B CAP_BACKEND=ryzenadj`\n");
             exit(-1);
         }
-        if(initializeRapl(&rc))
+        if(initializeRapl(&rc)) {
+            writeErrorMessage(language, program, "CapError");
             return -1;
+        }
 #endif
     }
     runTesting(ntimes,core, command, language, program);
@@ -568,6 +625,7 @@ int main(int argc, char **argv) {
 #ifdef USE_RYZENADJ
         destroyRyzenadj(ry);
 #else
+        restoreRapl(&rc);
         if (raplcap_destroy(&rc)) {
             printf("Error destroying CAP\n");
             perror("raplcap_destroy");
