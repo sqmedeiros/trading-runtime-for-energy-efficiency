@@ -5,7 +5,7 @@ stress-ng --cpu $(nproc) --cpu-load 80 --timeout 180s
 sleep 10
 
 # Run 20 times without perf
-echo "Running measure.sh without perf"
+echo "Running measure.sh with all cores, without perf"
 ./measure.sh 0 20
 
 sleep 60
@@ -16,7 +16,7 @@ stress-ng --cpu $(nproc) --cpu-load 80 --timeout 180s
 sleep 10
 
 # Run 20 times with perf
-echo "Running measure.sh without perf"
+echo "Running measure.sh with all cores, with perf"
 ./measure.sh 1 20
 
 sleep 60
@@ -30,7 +30,7 @@ stress-ng --cpu $(nproc) --cpu-load 80 --timeout 180s
 sleep 10
 
 # Run 20 times without perf
-echo "Running measure.sh without perf"
+echo "Running measure.sh with one core, without perf"
 ./measure.sh 0 20
 
 sleep 60
@@ -41,7 +41,7 @@ stress-ng --cpu $(nproc) --cpu-load 80 --timeout 180s
 sleep 10
 
 # Run 20 times with perf
-echo "Running measure.sh with perf"
+echo "Running measure.sh with one core, with perf"
 ./measure.sh 1 20
 
 

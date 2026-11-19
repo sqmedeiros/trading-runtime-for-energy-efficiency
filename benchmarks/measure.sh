@@ -2,8 +2,13 @@
 USE_PERF=${1:-1}
 NTIMES=${2:-20}
 JAVA_PATH=/usr/lib/jvm/jdk-25.0.4-oracle-x64
-OUTPUT_FILE="dacapo-measurements-perf-$USE_PERF-$(date +'%d-%m-%Y-%H:%M:%S').csv"
-MEASUREMENTS_FILE="dacapo-measurements-$(date +'%d-%m-%Y-%H:%M:%S').csv"
+ONLINE_CPUS=$(getconf _NPROCESSORS_ONLN)
+CORES_PREFIX=""
+[ "$ONLINE_CPUS" -eq 1 ] && CORES_PREFIX="single-"
+STAMP=$(date +'%d-%m-%Y-%H:%M:%S')
+OUTPUT_FILE="${CORES_PREFIX}dacapo-measurements-perf-$USE_PERF-$STAMP.csv"
+MEASUREMENTS_FILE="dacapo-measurements-$STAMP.csv"
+echo "Writing benchmarks/$OUTPUT_FILE ($ONLINE_CPUS CPUs online, USE_PERF=$USE_PERF)"
 cd ..
 
 # Compile sensors which will be used to calculate cool temperature

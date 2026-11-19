@@ -84,6 +84,8 @@ sudo sh cores_on_off.sh
 5. Execute the script to generate the CSV file (this script iterates all the Languages and all of the programs):
 
 Edit ``measure.sh`` to use the *perf* tool or not. Set variable `USE_PERF` to zero in order to replicate the original work that does not use *perf*.
+
+Without *perf*, the energy is read directly from the RAPL MSRs (`/dev/cpu/*/msr`, needs the `msr` module and root) on both Intel and AMD (Zen or newer). AMD only has the **Package** and **Core** counters, so PSys, GPU and DRAM stay empty; **Core** is the sum over the online cores.
   
 ```bash
 sh measure.sh
