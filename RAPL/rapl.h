@@ -39,6 +39,12 @@
 #define MSR_DRAM_PERF_STATUS		0x61B
 #define MSR_DRAM_POWER_INFO		0x61C
 
+#define MSR_AMD_RAPL_POWER_UNIT		0xC0010299
+#define MSR_AMD_CORE_ENERGY_STATUS	0xC001029A
+#define MSR_AMD_PKG_ENERGY_STATUS	0xC001029B
+#define AMD_MIN_FAMILY			0x17
+#define AMD_MAX_CORES			256
+
 /* RAPL UNIT BITMASK */
 #define POWER_UNIT_OFFSET	0
 #define POWER_UNIT_MASK		0x0F
@@ -58,7 +64,7 @@ extern int cpu_vendor;
 
 
 int open_msr(int core);
-long long read_msr(int fd, int which);
+long long read_msr(int fd, uint32_t which);
 int detect_cpu(void) ;
 int rapl_init(int core);
 void show_power_info(int core);

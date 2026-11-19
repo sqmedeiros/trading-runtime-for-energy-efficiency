@@ -5,12 +5,16 @@ int cpu_model;
 int cpu_vendor;
 int core=0;
 
-double package_before,package_after;
-double pp0_before,pp0_after;
-double pp1_before=0.0,pp1_after;
-double dram_before=0.0,dram_after;
+uint32_t package_before;
+uint32_t pp0_before;
+uint32_t pp1_before=0;
+uint32_t dram_before=0;
 
 double power_units,energy_units,time_units;
+
+static double energy_delta(uint32_t before, uint32_t after) {
+  return (double)(uint32_t)(after-before)*energy_units;
+}
 
 int open_msr(int core) {
 
@@ -36,11 +40,11 @@ int open_msr(int core) {
   return fd;
 }
 
-long long read_msr(int fd, int which) {
+long long read_msr(int fd, uint32_t which) {
 
   uint64_t data;
 
-  if ( pread(fd, &data, sizeof data, which) != sizeof data ) {
+  if ( pread(fd, &data, sizeof data, (off_t)which) != sizeof data ) {
     perror("rdmsr:pread");
     exit(127);
   }
@@ -83,7 +87,6 @@ int detect_cpu(void) {
 			if (!strncmp(vendor,"GenuineIntel",12)) cpu_vendor=CPU_VENDOR_INTEL;
 			else if (!strncmp(vendor,"AuthenticAMD",12)) {
 				cpu_vendor=CPU_VENDOR_AMD;
-				return -1;
 			} else {
 				printf("%s not an Intel chip\n",vendor);
 				return -1;
@@ -92,7 +95,7 @@ int detect_cpu(void) {
 
 		if (!strncmp(result,"cpu family",10)) {
 			sscanf(result,"%*s%*s%*s%d",&family);
-			if (family!=6) {
+			if ((cpu_vendor==CPU_VENDOR_INTEL && family!=6) || (cpu_vendor==CPU_VENDOR_AMD && family<AMD_MIN_FAMILY)) {
 				printf("Wrong CPU family %d\n",family);
 				return -1;
 			}
@@ -159,6 +162,87 @@ int detect_cpu(void) {
 
 
 
+static int amd_pkg_fd=-1;
+static int amd_core_fd[AMD_MAX_CORES];
+static int amd_ncores=0;
+static uint32_t amd_pkg_before, amd_core_before[AMD_MAX_CORES];
+
+static int read_cpu_sysfs(int cpu, const char *file, int *value) {
+  char path[BUFSIZ];
+  FILE *f;
+  int ok;
+
+  snprintf(path, sizeof path, "/sys/devices/system/cpu/cpu%d/%s", cpu, file);
+  f=fopen(path,"r");
+  if (f==NULL) return -1;
+  ok=fscanf(f,"%d",value)==1;
+  fclose(f);
+  return ok ? 0 : -1;
+}
+
+static int amd_online_cores(int *cpus, int max) {
+  int pkgs[AMD_MAX_CORES], cores[AMD_MAX_CORES];
+  int n=0, ncpus=(int)sysconf(_SC_NPROCESSORS_CONF);
+
+  for (int cpu=0; cpu<ncpus && n<max; cpu++) {
+    int online=1, pkg, core_id, seen=0;
+
+    read_cpu_sysfs(cpu, "online", &online);   /* cpu0 has no "online" file */
+    if (!online) continue;
+    if (read_cpu_sysfs(cpu, "topology/physical_package_id", &pkg) ||
+        read_cpu_sysfs(cpu, "topology/core_id", &core_id)) continue;
+    for (int i=0; i<n; i++)
+      if (pkgs[i]==pkg && cores[i]==core_id) seen=1;   /* SMT sibling: shares the core counter */
+    if (seen) continue;
+    pkgs[n]=pkg;
+    cores[n]=core_id;
+    cpus[n++]=cpu;
+  }
+  return n;
+}
+
+static int amd_rapl_init(int core) {
+  int cpus[AMD_MAX_CORES];
+  long long result;
+
+  for (int i=0; i<amd_ncores; i++) close(amd_core_fd[i]);
+  if (amd_pkg_fd>=0) close(amd_pkg_fd);
+
+  amd_ncores=amd_online_cores(cpus, AMD_MAX_CORES);
+  if (amd_ncores==0) {
+    fprintf(stderr, "No online core found to read the AMD core energy counter\n");
+    return -1;
+  }
+  for (int i=0; i<amd_ncores; i++) amd_core_fd[i]=open_msr(cpus[i]);
+  amd_pkg_fd=open_msr(core);
+
+  result=read_msr(amd_pkg_fd,MSR_AMD_RAPL_POWER_UNIT);
+  power_units=pow(0.5,(double)(result&0xf));
+  energy_units=pow(0.5,(double)((result>>8)&0x1f));
+  time_units=pow(0.5,(double)((result>>16)&0xf));
+  return 0;
+}
+
+static void amd_rapl_before(void) {
+  amd_pkg_before=(uint32_t)read_msr(amd_pkg_fd,MSR_AMD_PKG_ENERGY_STATUS);
+  for (int i=0; i<amd_ncores; i++)
+    amd_core_before[i]=(uint32_t)read_msr(amd_core_fd[i],MSR_AMD_CORE_ENERGY_STATUS);
+}
+
+static void amd_rapl_after(FILE *fp) {
+  uint32_t pkg_after=(uint32_t)read_msr(amd_pkg_fd,MSR_AMD_PKG_ENERGY_STATUS);
+  double core_energy=0.0;
+
+  for (int i=0; i<amd_ncores; i++)
+    core_energy+=energy_delta(amd_core_before[i],(uint32_t)read_msr(amd_core_fd[i],MSR_AMD_CORE_ENERGY_STATUS));
+
+  fprintf(fp,"%.18f, ",energy_delta(amd_pkg_before,pkg_after));
+  fprintf(fp,"%.18f, ",core_energy);
+  fprintf(fp," , ");  // GPU: no counter on AMD
+  fprintf(fp," , ");  // DRAM: no counter on AMD
+}
+
+
 int rapl_init(int core)
 { int fd;
   long long result;
@@ -168,6 +252,9 @@ int rapl_init(int core)
   printf("Unsupported CPU type\n");
   return -1;
   }
+
+  if (cpu_vendor==CPU_VENDOR_AMD)
+    return amd_rapl_init(core);
 
   // printf("Checking core #%d\n",core);
 
@@ -252,12 +339,15 @@ void rapl_before(FILE * fp,int core)
 { int fd;
   long long result;
 
+  if (cpu_vendor==CPU_VENDOR_AMD) {
+    amd_rapl_before();
+    return;
+  }
 
   fd=open_msr(core);
   result=read_msr(fd,MSR_PKG_ENERGY_STATUS);
 
-  package_before=(double)result*energy_units;
-  //  fprintf(fp,"Package energy: %.6fJ\n",package_before);
+  package_before=(uint32_t)result;
 
   /* only available on *Bridge-EP */
   if ((cpu_model==CPU_SANDYBRIDGE_EP) || (cpu_model==CPU_IVYBRIDGE_EP))
@@ -268,8 +358,7 @@ void rapl_before(FILE * fp,int core)
   }
 
   result=read_msr(fd,MSR_PP0_ENERGY_STATUS);
-  pp0_before=(double)result*energy_units;
-  // fprintf(fp,"PowerPlane0 (core) for core %d energy before: %.6fJ\n",core,pp0_before);
+  pp0_before=(uint32_t)result;
 
   result=read_msr(fd,MSR_PP0_POLICY);
   int pp0_policy=(int)result&0x001f;
@@ -287,8 +376,7 @@ void rapl_before(FILE * fp,int core)
   if ((cpu_model==CPU_SANDYBRIDGE) || (cpu_model==CPU_IVYBRIDGE) ||
   (cpu_model==CPU_HASWELL)) {
      result=read_msr(fd,MSR_PP1_ENERGY_STATUS);
-     pp1_before=(double)result*energy_units;
-     // fprintf(fp,"PowerPlane1 (on-core GPU if avail) before: %.6fJ\n",pp1_before);
+     pp1_before=(uint32_t)result;
      result=read_msr(fd,MSR_PP1_POLICY);
      int pp1_policy=(int)result&0x001f;
      //fprintf(fp,"PowerPlane1 (on-core GPU if avail) %d policy: %d\n",core,pp1_policy);
@@ -299,8 +387,7 @@ void rapl_before(FILE * fp,int core)
   if ((cpu_model==CPU_SANDYBRIDGE_EP) || (cpu_model==CPU_IVYBRIDGE_EP) ||
   (cpu_model==CPU_HASWELL)) {
      result=read_msr(fd,MSR_DRAM_ENERGY_STATUS);
-     dram_before=(double)result*energy_units;
-     // fprintf(fp,"DRAM energy before: %.6fJ\n",dram_before);
+     dram_before=(uint32_t)result;
   }
 
 }
@@ -310,25 +397,25 @@ void rapl_after(FILE * fp , int core)
 { int fd;
   long long result;
 
+  if (cpu_vendor==CPU_VENDOR_AMD) {
+    amd_rapl_after(fp);
+    return;
+  }
+
   fd=open_msr(core);
 
   result=read_msr(fd,MSR_PKG_ENERGY_STATUS);
-  package_after=(double)result*energy_units;
-  //  fprintf(fp,"Package energy: %.6fJ consumed\n",package_after-package_before);
-  fprintf(fp,"%.18f, ",package_after-package_before);  // PACKAGE
+  fprintf(fp,"%.18f, ",energy_delta(package_before,(uint32_t)result));  // PACKAGE
 
   result=read_msr(fd,MSR_PP0_ENERGY_STATUS);
-  pp0_after=(double)result*energy_units;
-
-  fprintf(fp,"%.18f, ",pp0_after-pp0_before);    // CORE
+  fprintf(fp,"%.18f, ",energy_delta(pp0_before,(uint32_t)result));    // CORE
 
 
   /* not available on SandyBridge-EP */
   if ((cpu_model==CPU_SANDYBRIDGE) || (cpu_model==CPU_IVYBRIDGE) ||
   (cpu_model==CPU_HASWELL)) {
      result=read_msr(fd,MSR_PP1_ENERGY_STATUS);
-     pp1_after=(double)result*energy_units;
-     fprintf(fp,"%.18f, ",pp1_after-pp1_before);     // GPU
+     fprintf(fp,"%.18f, ",energy_delta(pp1_before,(uint32_t)result));     // GPU
   }
   else
     fprintf(fp," , ");
@@ -336,8 +423,7 @@ void rapl_after(FILE * fp , int core)
   if ((cpu_model==CPU_SANDYBRIDGE_EP) || (cpu_model==CPU_IVYBRIDGE_EP) ||
   (cpu_model==CPU_HASWELL)) {
      result=read_msr(fd,MSR_DRAM_ENERGY_STATUS);
-     dram_after=(double)result*energy_units;
-     fprintf(fp,"%.18f, ",dram_after-dram_before);     // DRAM
+     fprintf(fp,"%.18f, ",energy_delta(dram_before,(uint32_t)result));     // DRAM
   }
   else
     fprintf(fp," , ");  

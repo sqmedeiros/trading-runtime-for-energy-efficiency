@@ -505,8 +505,11 @@ void performMeasurements(const char *command, const char *language, const char *
     FILE *fp;
     float temperature;
 
-    if (!USE_PERF) /* MSR units are only used by rapl_before/rapl_after */
-        rapl_init(core);
+    /* MSR units are only used by rapl_before/rapl_after */
+    if (!USE_PERF && rapl_init(core)) {
+        writeErrorMessage(language, program, "RaplError");
+        return;
+    }
 
     fp = fopen(MEASUREMENTS_FILE, "w");
     if (fp == NULL) {
@@ -589,12 +592,6 @@ int main(int argc, char **argv) {
     fflush(stdout);
 
     detect_cpu();
-
-    /* AMD only support perf */
-    if (cpu_vendor == CPU_VENDOR_AMD && !USE_PERF) {
-        printf("USE_PERF=0 is not supported on AMD CPUs, use USE_PERF=1\n");
-        return -1;
-    }
 
     if (WHATTSCAP != -1) {
 #ifdef USE_RYZENADJ
