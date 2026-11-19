@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 USE_PERF=${1:-1}
 NTIMES=${2:-20}
-JAVA_PATH=/usr/lib/jvm/jdk-25.0.4-oracle-x64
+source "$(dirname "$0")/../config.env"   # same JDK as the CLBG Java programs (JAVA_PATH = .../bin/java)
 ONLINE_CPUS=$(getconf _NPROCESSORS_ONLN)
 CORES_PREFIX=""
 [ "$ONLINE_CPUS" -eq 1 ] && CORES_PREFIX="single-"
@@ -25,9 +25,9 @@ cd ..
 
 echo "Language,Program,PowerLimit,PSys,Package,Core,GPU,DRAM,Time(ms),User Time,System Time,Cache References,Cache Misses,Temperature,Memory,Perf" > "./benchmarks/$OUTPUT_FILE"
 
-programs_dacapo=("avrora" "batik" "biojava" "cassandra" "eclipse" "fop" "graphchi" "h2" "h2o" "jme" "jython" "kafka" "luindex" "lusearch" "pmd" "spring" "sunflow" "tomcat" "tradebeans" "tradesoap" "xalan" "zxing")
+programs_dacapo=("avrora" "batik" "biojava" "eclipse" "fop" "graphchi" "h2" "jme" "jython" "kafka" "luindex" "lusearch" "pmd" "spring" "sunflow" "tomcat" "tradebeans" "tradesoap" "xalan" "zxing")
 
-for limit in -1 2 5 10 15 25; do
+for limit in -1 10 15; do
     pwd
     cd Utils/
     sudo python3 raplCapUpdate.py "$limit" $USE_PERF $MEASUREMENTS_FILE ../RAPL/main.c
@@ -41,7 +41,7 @@ for limit in -1 2 5 10 15 25; do
     # Run each Dacapo program and append results to the final CSV file
     for program in "${programs_dacapo[@]}"; do
         cd dacapo || exit
-        sudo ../../RAPL/main "sudo $JAVA_PATH/bin/java -jar dacapo-23.11-MR2-chopin.jar $program" dacapo "$program" "$NTIMES"        
+        sudo ../../RAPL/main "sudo $JAVA_PATH -jar dacapo-23.11-MR2-chopin.jar $program" dacapo "$program" "$NTIMES"        
 	file=$MEASUREMENTS_FILE
         sudo tail -n +2 $MEASUREMENTS_FILE >> ../"$OUTPUT_FILE"
         cd ..
