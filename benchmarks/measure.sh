@@ -27,7 +27,7 @@ echo "Language,Program,PowerLimit,PSys,Package,Core,GPU,DRAM,Time(ms),User Time,
 
 programs_dacapo=("avrora" "batik" "biojava" "eclipse" "fop" "graphchi" "h2" "jme" "jython" "kafka" "luindex" "lusearch" "pmd" "spring" "sunflow" "tomcat" "tradebeans" "tradesoap" "xalan" "zxing")
 
-for limit in -1 10 15; do
+for limit in -1 10 15 25; do
     pwd
     cd Utils/
     sudo python3 raplCapUpdate.py "$limit" $USE_PERF $MEASUREMENTS_FILE ../RAPL/main.c
